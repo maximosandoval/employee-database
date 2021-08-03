@@ -31,10 +31,10 @@
 console.log("starting");
 const inquirer = require("inquirer");
 console.log("inquirer");
-const mysql = require("mysql");
+const mysql = require("mysql2");
 console.log("mysql");
 require("console.table");
-console.log("This is line 34");
+// console.log("This is line 34");
 
 //SQL Connection
 const connection = mysql.createConnection({
@@ -44,7 +44,7 @@ const connection = mysql.createConnection({
   password: "password",
   database: "employee_trackerDb",
 });
-console.log("This is line 44");
+// console.log("This is line 44");
 
 //Connection to SQL Db
 connection.connect((err) => {
@@ -69,7 +69,7 @@ const mainQuestions = async () => {
           "Add Employee",
           "View Department",
           "View Role",
-          "View Employees",
+          "View Employee",
           "Update Employee Role",
           "Exit",
         ],
@@ -89,7 +89,7 @@ const selections = (user_option) => {
   if (user_option === "Add Role") {
     employeeRole();
   }
-  if (user_option === "Add Employees") {
+  if (user_option === "Add Employee") {
     employeeAdd();
   }
   if (user_option === "View Department") {
@@ -98,13 +98,13 @@ const selections = (user_option) => {
   if (user_option === "View Role") {
     viewRole();
   }
-  if (user_option === "View Employees") {
+  if (user_option === "View Employee") {
     viewAll();
   }
   if (user_option === "Update Employee Role") {
     updateRole();
   }
-  if (userChoice === "Exit?") {
+  if (user_option === "Exit") {
     console.log("Thank you for updating the Employee Tracker");
     connection.end();
   }
@@ -117,12 +117,12 @@ const employeeDept = async () => {
       {
         name: "name",
         type: "input",
-        message: "What Department would you like to add?",
+        message: "What Department would you like to add",
       },
     ]);
-    connection.query("INSERT INTO departments(name) VALUES(?)", newDept.name);
+    connection.query("INSERT INTO department(name) VALUES(?)", newDept.name);
     console.log(`New department added: ${newDept.name}`);
-    start();
+    mainQuestions();
   } catch (err) {
     console.log(err);
     connection.end();
@@ -135,12 +135,12 @@ const employeeRole = async () => {
       {
         name: "title",
         type: "input",
-        message: "What is the title of the new role?",
+        message: "What is the title of the new role",
       },
       {
         name: "salary",
         type: "number",
-        message: "What is the salary for the new role?",
+        message: "What is the salary for the new role",
       },
       // Key pairs for role ids
       {
@@ -161,7 +161,7 @@ const employeeRole = async () => {
       { title, salary, department_id: department },
       (err, title) => {
         console.log(`NEW ROLE ADDED:${title}`);
-        start();
+        mainQuestions();
       }
     );
   } catch (err) {
@@ -176,12 +176,12 @@ const employeeAdd = async () => {
       {
         name: "first",
         type: "input",
-        message: "What is the employee's first name?",
+        message: "What is the employee's first name",
       },
       {
         name: "last",
         type: "input",
-        message: "What is the employee's last name?",
+        message: "What is the employee's last name",
       },
       // Key pairs for role ids
       {
@@ -204,7 +204,7 @@ const employeeAdd = async () => {
       {
         name: "manager",
         type: "list",
-        message: "Select the employee's manager",
+        message: "Select the employee manager",
         choices: [
           { name: "Paul Blart", value: 1 },
           { name: "Mary Allen", value: 2 },
@@ -214,11 +214,11 @@ const employeeAdd = async () => {
       },
     ]);
     const query =
-      "INSERT INTO employees (first_name, last_name, role_id, manager_id) VALUES(?, ?, ?, ?)";
+      "INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES(?, ?, ?, ?)";
     connection.query(query, [first, last, role, manager], (err, result) => {
       if (err) throw err;
       console.log(`NEW EMPLOYEE ADDED:${first} ${last} `);
-      start();
+      mainQuestions();
     });
   } catch (err) {
     console.log(err);
@@ -254,7 +254,7 @@ const viewAll = () => {
 };
 // Update Employee Role
 const updateRole = async () => {
-  connection.query("SELECT last_name from employees", async (err, res) => {
+  connection.query("SELECT last_name from employee", async (err, res) => {
     try {
       const { last_name } = await inquirer.prompt([
         {
@@ -270,7 +270,7 @@ const updateRole = async () => {
         {
           name: "role_id",
           type: "list",
-          message: "Select the updated employee's role",
+          message: "Select the updated employee role",
           choices: [
             { name: "Lead Engineer", value: 1 },
             { name: "Mid Engineer", value: 1 },
@@ -285,12 +285,12 @@ const updateRole = async () => {
         },
       ]);
 
-      const query = "UPDATE employees SET role_id =? WHERE last_name =?";
+      const query = "UPDATE employee SET role_id =? WHERE last_name =?";
       connection.query(query, [parseInt(role_id), last_name], (err, res) => {
         if (err) throw err;
         console.log(`${last_name} updated Role ID to: ${role_id}`);
       });
-      start();
+      mainQuestions();
     } catch (error) {
       console.log(error);
       connection.end();
