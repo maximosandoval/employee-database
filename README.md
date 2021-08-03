@@ -2,8 +2,8 @@
 
 Employee Tracker Program is a small, command-line application which is built on a small database schema utilizing three tables. The program allows end users to add, view and/or update employees. This program uses the command function exclusively so knowledge of terminal is necessary to update the database.
 
-- [Installation]
-- [Usage]
+- [Installation](https://github.com/maximosandoval/employee-database#install)
+- [Screenshots](https://github.com/maximosandoval/employee-database#screenshot)
 - [Video Walkthru](https://media.publit.io/file/DU/module-12-walkthru.mp4)
 
 ## Criteria
@@ -32,7 +32,7 @@ Review the question prompts and navigate using your arrow and enter keys. To see
   - Inquirer
   - console.table
 
-## Screen Shot
+## Screenshot
 
 ![Screenshot 1](https://media.publit.io/file/DU/screen1.png)
 
